@@ -18,22 +18,58 @@ MUTE_LOCKED = datetime.datetime.min
 VOLUME = None
 
 
-def askSL():
-    sensLevel = None
-    while not sensLevel:
-        print("Please enter the SENSITIVITY to the amount of sound(): ")
-        print("Choose between 0 (Highest sense) to 44000(lowest): ")
-        sensLevel = input().strip()
-    return sensLevel
-SENSITIVITY = int(askSL())
+def ask(question, options):
+    result = None
+    while result not in options:
+        print(question)
+        result = input().strip()
+    return result
+
+
+def sensitivity_converter(sens):
+    return{
+        1: '70000',
+        2: '63000',
+        3: '57000',
+        4: '50000',
+        5: '45000',
+        6: '38000',
+        7: '26000',
+        8: '20000',
+        9: '11111',
+        10: '0',
+    }.get(sens,11)
+
+
+# def askSL():
+#     while True:
+#         print("Please enter the SENSITIVITY to the amount of sound(): ")
+#         print("Choose between 0 (Highest sense) to 44000(lowest): ")
+#         sensLevel = int(input().strip())
+
+#         if not sensLevel in range(0, 44000):
+#             print("----------------INVALID VALUE--------------------")
+#             askSL()
+#         else:
+#             False
+
+#         return sensLevel
+
+
+# answer = int(ask("Please enter the SENSITIVITY to the amount of sound from 1 to 10: ", [
+#              "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]))
+
+SENSITIVITY = int(sensitivity_converter(int(ask("Please enter the SENSITIVITY to the amount of sound from 1 to 10: ", [
+             "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]))))
+#print(type(SENSITIVITY))
+#print(SENSITIVITY)
+#SENSITIVITY = askSL()
 
 
 def plot_data(in_data):
     global MUTE_LOCKED
     global VOLUME
     global MIXER
-    
-
 
     # get and convert the data to float
     audio_data = struct.unpack("h", in_data[:2])
