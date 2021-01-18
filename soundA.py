@@ -34,9 +34,9 @@ def sensitivity_converter(sens):
         5: '45000',
         6: '38000',
         7: '26000',
-        8: '20000',
-        9: '11111',
-        10: '5000',
+        8: '17000',
+        9: '9500',
+        10: '4000',
     }.get(sens, 11)
 
 
@@ -52,6 +52,8 @@ def plot_data(in_data):
     # get and convert the data to float
     audio_data = struct.unpack("h", in_data[:2])
     ct = datetime.datetime.now()
+    
+    #comparing the sensitivity with incoming noise
     if audio_data[0] > SENSITIVITY:
         if VOLUME != 0:
             MIXER.setmute(1)# Mute the system
@@ -59,16 +61,20 @@ def plot_data(in_data):
             VOLUME = 0
             print("MUTED!!!")
         MUTE_LOCKED = ct + MUTE_HOLD_TIME
+    
     elif ct > MUTE_LOCKED:
         if VOLUME != 100:
             MIXER.setmute(0)#Unmute the system
            # MIXER.setvolume(100)  # Set the volume to 100%.
             VOLUME = 100
             print("UNMUTED Again!!!")
+            
     print("current time:-", ct)
     if VOLUME==0:
             print("MUTED!!!Noise higher than SENSITIVITY value")
-    print('UNMUTE')
+    else:
+        print('UNMUTE')
+        
     #print("volume:", VOLUME)
 
 
