@@ -12,12 +12,11 @@ RATE = 44100
 CHUNK = 1024  # 1024bytes of data red from a buffer
 
 MIXER = alsaaudio.Mixer()
-
 MUTE_HOLD_TIME = datetime.timedelta(seconds=5)
 MUTE_LOCKED = datetime.datetime.min
 VOLUME = None
 
-
+# checking  the user input
 def ask(question, options):
     result = None
     while result not in options:
@@ -25,7 +24,7 @@ def ask(question, options):
         result = input().strip()
     return result
 
-
+# binding the input to SENSITIVITY value
 def sensitivity_converter(sens):
     return{
         1: '70000',
@@ -37,33 +36,12 @@ def sensitivity_converter(sens):
         7: '26000',
         8: '20000',
         9: '11111',
-        10: '0',
-    }.get(sens,11)
+        10: '5000',
+    }.get(sens, 11)
 
-
-# def askSL():
-#     while True:
-#         print("Please enter the SENSITIVITY to the amount of sound(): ")
-#         print("Choose between 0 (Highest sense) to 44000(lowest): ")
-#         sensLevel = int(input().strip())
-
-#         if not sensLevel in range(0, 44000):
-#             print("----------------INVALID VALUE--------------------")
-#             askSL()
-#         else:
-#             False
-
-#         return sensLevel
-
-
-# answer = int(ask("Please enter the SENSITIVITY to the amount of sound from 1 to 10: ", [
-#              "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]))
 
 SENSITIVITY = int(sensitivity_converter(int(ask("Please enter the SENSITIVITY to the amount of sound from 1 to 10: ", [
-             "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]))))
-#print(type(SENSITIVITY))
-#print(SENSITIVITY)
-#SENSITIVITY = askSL()
+    "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]))))
 
 
 def plot_data(in_data):
@@ -76,17 +54,22 @@ def plot_data(in_data):
     ct = datetime.datetime.now()
     if audio_data[0] > SENSITIVITY:
         if VOLUME != 0:
-            MIXER.setvolume(0)  # Set the volume to 0%.
+            MIXER.setmute(1)# Mute the system
+           # MIXER.setvolume(0)  # Set the volume to 0% (MUTE).
             VOLUME = 0
-            print("A voice of more than 60 DB Detected")
+            print("MUTED!!!")
         MUTE_LOCKED = ct + MUTE_HOLD_TIME
     elif ct > MUTE_LOCKED:
         if VOLUME != 100:
-            MIXER.setvolume(100)  # Set the volume to 100%.
+            MIXER.setmute(0)#Unmute the system
+           # MIXER.setvolume(100)  # Set the volume to 100%.
             VOLUME = 100
-            print("unmute_command")
+            print("UNMUTED Again!!!")
     print("current time:-", ct)
-    print("volume:", VOLUME)
+    if VOLUME==0:
+            print("MUTED!!!Noise higher than SENSITIVITY value")
+    print('UNMUTE')
+    #print("volume:", VOLUME)
 
 
 def main():
