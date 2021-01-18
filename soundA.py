@@ -24,24 +24,29 @@ def ask(question, options):
         result = input().strip()
     return result
 
-# binding the input to SENSITIVITY value
+# binding the input to MIC_CONF value
 def sensitivity_converter(sens):
     return{
-        1: '70000',
-        2: '63000',
-        3: '57000',
-        4: '50000',
-        5: '45000',
-        6: '38000',
-        7: '26000',
-        8: '17000',
-        9: '9500',
-        10: '4000',
-    }.get(sens, 11)
+        1: '32000',
+        2: '31000',
+        3: '29000',
+        4: '27000',
+        5: '25000',
+        6: '23000',
+        7: '21000',
+        8: '19000',
+        9: '17000',
+        11: '15000',
+        12: '13000',
+        13: '11000',
+        14: '9000',
+        15: '7000',
+        16: '6000',
+    }.get(sens, 17)
 
-
-SENSITIVITY = int(sensitivity_converter(int(ask("Please enter the SENSITIVITY to the amount of sound from 1 to 10: ", [
-    "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]))))
+#asking user for input
+MIC_CONF = int(sensitivity_converter(int(ask("Please enter the MIC_CONF to the amount of sound from 1 to 16: ", [
+    "1", "2", "3", "4", "5", "6", "7", "8", "9", "10","11","12","13","14","15","16"]))))
 
 
 def plot_data(in_data):
@@ -52,29 +57,29 @@ def plot_data(in_data):
     # get and convert the data to float
     audio_data = struct.unpack("h", in_data[:2])
     ct = datetime.datetime.now()
-    
-    #comparing the sensitivity with incoming noise
-    if audio_data[0] > SENSITIVITY:
+
+    # comparing the MIC_CONF with incoming noise
+    if audio_data[0] > MIC_CONF:
         if VOLUME != 0:
-            MIXER.setmute(1)# Mute the system
+            MIXER.setmute(1)  # Mute the system
            # MIXER.setvolume(0)  # Set the volume to 0% (MUTE).
             VOLUME = 0
             print("MUTED!!!")
         MUTE_LOCKED = ct + MUTE_HOLD_TIME
-    
+
     elif ct > MUTE_LOCKED:
         if VOLUME != 100:
-            MIXER.setmute(0)#Unmute the system
+            MIXER.setmute(0)  # Unmute the system
            # MIXER.setvolume(100)  # Set the volume to 100%.
             VOLUME = 100
             print("UNMUTED Again!!!")
-            
+
     print("current time:-", ct)
-    if VOLUME==0:
-            print("MUTED!!!Noise higher than SENSITIVITY value")
+    if VOLUME == 0:
+        print("MUTED!!! Noise higher than MIC_CONF value: {a}".format(a=MIC_CONF))
     else:
-        print('UNMUTE')
-        
+        print("UNMUTE!!!! MIC_CONF value: {a}".format(a=MIC_CONF))
+
     #print("volume:", VOLUME)
 
 
